@@ -1,43 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
-from auth import get_current_user, create_access_token, get_password_hash, verify_password
+from auth import get_current_user, create_access_token
 from models import User
 from schemas import UserLogin, TokenResponse, UserResponse
 from datetime import timedelta
+import bcrypt
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-# Demo user
-DEMO_USER = {
-    "email": "admin@company.com",
-    "password_hash": "$2b$12$kZLV1gVYCF4o1pj7SkKlK.Oj.RZU2XUbYplJhNGGlRvLxFVqB2N8u",  # bcrypt hash of "password123"
-    "full_name": "Admin User",
-    "role": "Admin"
-}
+def verify_bcrypt_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify password using bcrypt directly, bypassing passlib issues"""
+    try:
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception as e:
+        return False
 
 @router.post("/login", response_model=TokenResponse)
 async def login(credentials: UserLogin, db: Session = Depends(get_db)):
-    # Check demo credentials
-    if credentials.email == DEMO_USER["email"]:
-        if verify_password(credentials.password, DEMO_USER["password_hash"]):
-            access_token = create_access_token(
-                data={"sub": "demo-user-id"},
-                expires_delta=timedelta(hours=24)
-            )
-            return TokenResponse(
-                access_token=access_token,
-                user=UserResponse(
-                    user_id="demo-user-id",
-                    email=DEMO_USER["email"],
-                    full_name=DEMO_USER["full_name"],
-                    role=DEMO_USER["role"]
-                )
-            )
-    
     # Try to find user in database
     user = db.query(User).filter(User.email == credentials.email).first()
-    if user and verify_password(credentials.password, user.hashed_password):
+    if user and verify_bcrypt_password(credentials.password, user.hashed_password):
         access_token = create_access_token(
             data={"sub": user.user_id},
             expires_delta=timedelta(hours=24)

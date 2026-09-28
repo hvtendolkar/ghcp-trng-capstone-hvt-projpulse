@@ -21,7 +21,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/login', credentials)
+      const response = await api.post('/api/v1/auth/login', credentials)
       localStorage.setItem('token', response.data.access_token)
       return response.data
     } catch (error: any) {
@@ -37,7 +37,7 @@ export const checkAuth = createAsyncThunk(
       if (!localStorage.getItem('token')) {
         return null
       }
-      const response = await api.get('/auth/me')
+      const response = await api.get('/api/v1/auth/me')
       return response.data
     } catch (error) {
       localStorage.removeItem('token')
