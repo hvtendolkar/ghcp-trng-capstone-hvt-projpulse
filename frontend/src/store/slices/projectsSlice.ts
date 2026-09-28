@@ -31,7 +31,7 @@ export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/api/v1/projects')
+      const response = await api.get('/v1/projects')
       return response.data
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.detail || 'Failed to fetch projects')
@@ -43,7 +43,7 @@ export const createProject = createAsyncThunk(
   'projects/createProject',
   async (projectData: any, { rejectWithValue }) => {
     try {
-      const response = await api.post('/api/v1/projects', projectData)
+      const response = await api.post('/v1/projects', projectData)
       return response.data
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.detail || 'Failed to create project')
