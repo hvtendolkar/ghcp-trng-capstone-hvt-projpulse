@@ -50,8 +50,8 @@ class ProjectResponse(ProjectBase):
     status: str
     contract_value: Optional[Decimal]
     currency: str
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     margin: float = 40.0  # Placeholder
     wip: Decimal = Decimal("0")  # Placeholder
     invoicing_status: str = "On Track"  # Placeholder
