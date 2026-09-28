@@ -16,6 +16,15 @@ function Dashboard() {
     return <div className="p-6 text-center">Loading dashboard...</div>
   }
 
+  // Format currency values
+  const formatCurrency = (value: string | number) => {
+    const num = typeof value === 'string' ? parseFloat(value) : value
+    if (isNaN(num)) return '$0'
+    if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`
+    if (num >= 1000) return `$${(num / 1000).toFixed(0)}K`
+    return `$${num.toFixed(0)}`
+  }
+
   const mockChartData = [
     { month: 'Jan', wip: 150000, revenue: 250000, margin: 40 },
     { month: 'Feb', wip: 160000, revenue: 270000, margin: 38 },
@@ -39,7 +48,7 @@ function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm font-medium">Portfolio Value</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">$2.4M</p>
+              <p className="text-2xl font-bold text-gray-900 mt-2">{data ? formatCurrency(data.total_portfolio_value) : '$0'}</p>
             </div>
             <div className="bg-blue-100 p-3 rounded-lg">
               <TrendingUp className="text-blue-600" size={24} />
@@ -51,7 +60,7 @@ function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm font-medium">Active Projects</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">12</p>
+              <p className="text-2xl font-bold text-gray-900 mt-2">{data ? data.active_projects : 0}</p>
             </div>
             <div className="bg-green-100 p-3 rounded-lg">
               <TrendingUp className="text-green-600" size={24} />
@@ -63,7 +72,7 @@ function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm font-medium">Total WIP</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">$425K</p>
+              <p className="text-2xl font-bold text-gray-900 mt-2">{data ? formatCurrency(data.total_wip) : '$0'}</p>
             </div>
             <div className="bg-yellow-100 p-3 rounded-lg">
               <AlertCircle className="text-yellow-600" size={24} />
@@ -75,7 +84,7 @@ function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm font-medium">Avg Margin</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">40.5%</p>
+              <p className="text-2xl font-bold text-gray-900 mt-2">{data ? `${data.average_margin.toFixed(1)}%` : '0%'}</p>
             </div>
             <div className="bg-purple-100 p-3 rounded-lg">
               <Zap className="text-purple-600" size={24} />
