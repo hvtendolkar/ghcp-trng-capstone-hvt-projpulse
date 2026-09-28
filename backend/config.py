@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/projectpulse"
+        "sqlite:///./projectpulse.db"
     )
     
     # JWT
